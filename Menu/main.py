@@ -27,7 +27,14 @@ pygame.display.set_caption("Menu")
 # Initialize the video capture
 cap = cv2.VideoCapture(video_path)
 
+def watermark(size):
+
+
+    return pygame.font.Font("Menu/assets/Credit_font.ttf", size)
+
 def get_font(size):
+
+
     return pygame.font.Font("Menu/assets/font.ttf", size)
 
 def fade_fadein(image_path, fade_duration=3000):
@@ -109,27 +116,32 @@ def play():
 
         pygame.display.update()
 
+def add_watermark(text, font, pos, alpha=128):
+    """
+    Add a watermark text to the screen.
+
+    Parameters:
+    text (str): The text of the watermark.
+    font (pygame.font.Font): The font used to render the text.
+    pos (tuple): The (x, y) position of the text.
+    alpha (int): The alpha transparency value (0 to 255).
+    """
+    text_surface = font.render(( "TRAFFIC SIM BY GROUP 2 & 6"), True, (255, 255, 255))  # Render text in white
+    text_surface.set_alpha(20)  # Set transparency
+    text_rect = text_surface.get_rect(center=pos)
+    SCREEN.blit(text_surface, text_rect)
+
+
 def credits():
-    names = [
-        "Lopez, John Red",
-        "Adlao, Mark Clarence",
-        "Paulite, James Mathieu",
-        "Francisco, Alvinne",
-        "De-Una, Andrie",
-        "Ciriaco, Gian",
-        "De Vera, Chrislyn",
-        "Tabasa, Margarette",
-        "Gaso, Jelly",
-        "Sanchez, Jenica",
-        "Ogabang, JB Rachine",
-        "Sa"
-    ]
+    
+    credit_image = pygame.image.load("Menu/assets/CREDIT.png")
+    credit_image = pygame.transform.scale(credit_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
     while True:
         credits_mouse_pos = pygame.mouse.get_pos()
 
         SCREEN.fill((255, 255, 255))  # Fill screen with white
-
+    
         # Render video frame
         ret, frame = cap.read()
         if ret:
@@ -137,17 +149,16 @@ def credits():
             frame = pygame.image.frombuffer(frame.tobytes(), frame.shape[1::-1], "RGB")
             SCREEN.blit(frame, (0, 0))
 
-        # Render names
-        y_position = 200
-        for name in names:
-            name_text = get_font(40).render(name, True, (255, 255, 255))  # White color
-            name_rect = name_text.get_rect(center=(SCREEN_WIDTH // 2, y_position))
-            SCREEN.blit(name_text, name_rect)
-            y_position += 50   # Adjust spacing between names
+        # Render CREDIT.png image
+        SCREEN.blit(credit_image, (0, 0))
+
+
+        # Add watermark text
+        add_watermark("TRAFFIC SIM BY GROUP 2 & 6", watermark(30), (SCREEN_WIDTH // 2, SCREEN_HEIGHT - 50), alpha=128)
 
         # Render "BACK" button
-        credits_button = Button(image=pygame.image.load("Menu/assets/Back Rect.png"), pos=(800, 800), 
-                                text_input="BACK", font=get_font(35), base_color="GREEN", hovering_color="BLACK")
+        credits_button = Button(image=None, pos=(950, 950), 
+                                text_input="BACK", font=get_font(35), base_color="Black", hovering_color="Black")
         credits_button.changeColor(credits_mouse_pos)
         credits_button.update(SCREEN)
 
@@ -188,8 +199,8 @@ def main_Menu():
         SCREEN.blit(play_button_shadow, play_button_rect)
 
         # Render "CREDITS" button
-        credits_button = Button(image=None, pos=(800, 800), 
-                                text_input="CREDITS", font=get_font(40), base_color="Blue", hovering_color="White")
+        credits_button = Button(image=pygame.image.load("Menu/assets/Back Rect.png"), pos=(800, 800), 
+                                text_input="CREDITS", font=get_font(40), base_color="Gray", hovering_color="Black")
         credits_button_shadow = get_font(40).render("CREDITS", True, (0, 0, 0))
         credits_button_rect = credits_button_shadow.get_rect(center=(800 + 3, 800 + 3))
         SCREEN.blit(credits_button_shadow, credits_button_rect)
